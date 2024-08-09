@@ -65,16 +65,25 @@ class DeterministicP256Test: XCTestCase {
 
     func testGenDerivedMainKeyThrowsError() {
         // Invalid parameters to trigger the error
-        XCTAssertThrowsError(try D.genDerivedMainKey(entropy: [], salt: [], iterationCount: 0, keyLength: 32)) { error in
+        XCTAssertThrowsError(try D.genDerivedMainKey(entropy: [], salt: [], iterationCount: 0, keyLengthBytes: 32)) { error in
             // Verify that the error is of the expected type and domain
             let nsError = error as NSError
             XCTAssertEqual(nsError.domain, "CommonCryptoError")
         }
 
-        XCTAssertThrowsError(try D.genDerivedMainKey(entropy: [], salt: [], iterationCount: 1000, keyLength: 0)) { error in
+        XCTAssertThrowsError(try D.genDerivedMainKey(entropy: [], salt: [], iterationCount: 1000, keyLengthBytes: 0)) { error in
             // Verify that the error is of the expected type and domain
             let nsError = error as NSError
             XCTAssertEqual(nsError.domain, "CommonCryptoError")
+        }
+
+        // Invalid key length, not multiple of 8
+        XCTAssertThrowsError(try D.genDerivedMainKeyWithBIP39(
+            phrase: "salon zoo engage submit smile frost later decide wing sight chaos renew lizard rely canal coral scene hobby scare step bus leaf tobacco slice", salt: Array("liquid".utf8), iterationCount: 210_000, keyLength: 511
+        )) { error in
+            // Verify that the error is of the expected type and domain
+            let nsError = error as NSError
+            XCTAssertEqual(nsError.domain, "InvalidKeyLength")
         }
     }
 
