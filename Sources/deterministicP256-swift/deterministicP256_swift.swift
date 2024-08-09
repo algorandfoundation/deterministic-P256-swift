@@ -53,13 +53,13 @@ class DeterministicP256 {
     }
 
     func signWithDomainSpecificKeyPair(keyPair: P256.Signing.PrivateKey, payload: Data) throws -> P256.Signing.ECDSASignature {
-        return try keyPair.signature(for: payload)
+        try keyPair.signature(for: payload)
     }
 
     // Method introduced to have API parity with the Kotlin implementation
     // In the current Swift implementation, the public key is simple to retrieve in raw represetnation as opposed to DER representation.
     // This method will return the exact same bytes as the equivalent getPurePKBytes in the Kotlin implementation will return.
     func getPurePKBytes(keyPair: P256.Signing.PrivateKey) -> [UInt8] {
-        return [UInt8](keyPair.publicKey.rawRepresentation)
+        [UInt8](keyPair.publicKey.rawRepresentation)
     }
 }

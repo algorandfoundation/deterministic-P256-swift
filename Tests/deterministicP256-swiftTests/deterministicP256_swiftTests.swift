@@ -156,12 +156,12 @@ extension MnemonicSwift.MnemonicError: Equatable {
     public static func == (lhs: MnemonicSwift.MnemonicError, rhs: MnemonicSwift.MnemonicError) -> Bool {
         switch (lhs, rhs) {
         case (.checksumError, .checksumError):
-            return true
+            true
         case (.unsupportedLanguage, .unsupportedLanguage):
-            return true
+            true
         // Add other cases if there are more error types
         default:
-            return false
+            false
         }
     }
 }
