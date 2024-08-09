@@ -122,7 +122,7 @@ For FIDO2/WebAuthn, it is useful to be able to deterministically produce the Cre
 e.g. by calculating the SHA256 hash of the public key. To ensure determinism and equivalence
 with the Kotlin library, the getPurePKBytes method has been made available:
 
-````swift
+```swift
 import CryptoKit
 
 let pk = D.getPurePKBytes(keyPair: keyPair)
@@ -130,7 +130,7 @@ let hash = SHA256.hash(data: D.getPurePKBytes(keyPair: keyPair))
             .withUnsafeBytes { Array($0) }
 ```
 
-the hash digest should be exact same as produced with the Kotlin library.
+The hash digest should be exact same as produced with the Kotlin library.
 
 # Setup
 
@@ -139,9 +139,9 @@ This library relies on Swift 5.9, uses Swift Package Manager and comes with a pr
 Copy the hooks under git-hooks into the .git/hooks/ directory:
 
 ```bash
-    chmod +x git-hooks/pre-commit
-    cp git-hooks/* .git/hooks/
-````
+chmod +x git-hooks/pre-commit
+cp git-hooks/* .git/hooks/
+```
 
 # LICENSE
 
