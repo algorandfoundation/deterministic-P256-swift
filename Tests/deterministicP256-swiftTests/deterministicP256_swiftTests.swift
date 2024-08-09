@@ -1,5 +1,4 @@
 import CryptoKit
-import CryptoSwift
 import MnemonicSwift
 import XCTest
 
