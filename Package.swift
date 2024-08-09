@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Electric-Coin-Company/MnemonicSwift.git", from: "2.2.4"),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.8.3"),
+        .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.53.9"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
