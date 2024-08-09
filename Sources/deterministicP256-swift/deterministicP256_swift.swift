@@ -22,13 +22,29 @@ class DeterministicP256 {
 
      - Note: The `keyLength` parameter is integer divided by 8 internally to convert the length from bits to full bytes.
      */
-    func genDerivedMainKeyWithBIP39(phrase: String, salt: [UInt8] = Array("liquid".utf8), iterationCount: Int = 210_000, keyLength: Int = 512) throws -> Data {
+    func genDerivedMainKeyWithBIP39(
+        phrase: String,
+        salt: [UInt8] = Array("liquid".utf8),
+        iterationCount: Int = 210_000,
+        keyLength: Int = 512
+    ) throws -> Data {
         // Validate the key length
         guard keyLength % 8 == 0 else {
-            throw NSError(domain: "InvalidKeyLength", code: 1, userInfo: [NSLocalizedDescriptionKey: "Key length must be divisible by 8."])
+            throw NSError(
+                domain: "InvalidKeyLength",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Key length must be divisible by 8.",
+                ]
+            )
         }
         try Mnemonic.validate(mnemonic: phrase)
-        return try genDerivedMainKey(entropy: Array(phrase.utf8), salt: salt, iterationCount: iterationCount, keyLengthBytes: keyLength / 8)
+        return try genDerivedMainKey(
+            entropy: Array(phrase.utf8),
+            salt: salt,
+            iterationCount: iterationCount,
+            keyLengthBytes: keyLength / 8
+        )
     }
 
     /**
@@ -49,7 +65,12 @@ class DeterministicP256 {
 
      - Note: The `keyLength` parameter specifies the length of the derived key in bytes.
      */
-    func genDerivedMainKey(entropy: [UInt8], salt: [UInt8], iterationCount: Int, keyLengthBytes: Int) throws -> Data {
+    func genDerivedMainKey(
+        entropy: [UInt8],
+        salt: [UInt8],
+        iterationCount: Int,
+        keyLengthBytes: Int
+    ) throws -> Data {
         var derivedKey = [UInt8](repeating: 0, count: keyLengthBytes)
         let status = CCKeyDerivationPBKDF(
             CCPBKDFAlgorithm(kCCPBKDF2),
@@ -64,7 +85,11 @@ class DeterministicP256 {
         )
 
         guard status == kCCSuccess else {
-            throw NSError(domain: "CommonCryptoError", code: Int(status), userInfo: nil)
+            throw NSError(
+                domain: "CommonCryptoError",
+                code: Int(status),
+                userInfo: nil
+            )
         }
 
         return Data(derivedKey)
@@ -74,9 +99,9 @@ class DeterministicP256 {
      Generates a domain-specific key pair using a derived main key, origin, user ID, and an optional counter.
 
      This function concatenates the provided derived main key, origin, user ID, and counter to create a unique input.
-     It then calculates the SHA-512 hash of this input and uses the first 32 bytes of the hash as the seed to generate a P256 private key.
-
-     The origin and userId are meant to correspond to their WebAuthn counterparts but they can be any strings that help to uniquely identify the key pair.
+     It then calculates the SHA-512 hash of this input and uses the first 32 bytes of the hash as the seed to
+     generate a P256 private key. The origin and userId are meant to correspond to their WebAuthn counterparts
+     but they can be any strings that help to uniquely identify the key pair.
 
      - Parameters:
         - derivedMainKey: A `Data` object representing the derived main key.
@@ -86,11 +111,19 @@ class DeterministicP256 {
 
      - Returns: A `P256.Signing.PrivateKey` object representing the generated private key.
 
-     - Throws: This function uses a force-try (`try!`) when creating the private key, which will cause a runtime error if the key generation fails.
+     - Throws: This function uses a force-try (`try!`) when creating the private key, which will cause
+     a runtime error if the key generation fails.
 
-     - Note: The SHA-512 hash is calculated using the CommonCrypto library, and only the first 32 bytes of the hash are used as the seed for the private key.
+     - Note: The SHA-512 hash is calculated using the CommonCrypto library, and only the first 32 bytes of the hash
+     are used as the seed for the private key, similar to BC in the Kotlin implementation. Certain java.security providers
+     accept 40 bytes of seed but we explictly ensure it is 32 bytes.
      */
-    func genDomainSpecificKeyPair(derivedMainKey: Data, origin: String, userId: String, counter: UInt32 = 0) -> P256.Signing.PrivateKey {
+    func genDomainSpecificKeyPair(
+        derivedMainKey: Data,
+        origin: String,
+        userId: String,
+        counter: UInt32 = 0
+    ) -> P256.Signing.PrivateKey {
         var concat = Data()
         concat.append(derivedMainKey)
         concat.append(contentsOf: Array(origin.utf8))
@@ -115,7 +148,8 @@ class DeterministicP256 {
     /**
       Signs a payload using a domain-specific key pair.
 
-      This function takes a P256 private key and a payload, and generates an ECDSA signature for the payload using the private key.
+      This function takes a P256 private key and a payload, and generates an ECDSA signature for the
+      payload using the private key.
 
       We call P256.Signing.PrivateKey a keypair because it can produce its own public key.
       In general, it is good to minimize the risk of pairing a private key with the wrong public key.
@@ -130,7 +164,10 @@ class DeterministicP256 {
 
      - Note: The signature is generated using the ECDSA algorithm with the P256 curve.
      */
-    func signWithDomainSpecificKeyPair(keyPair: P256.Signing.PrivateKey, payload: Data) throws -> P256.Signing.ECDSASignature {
+    func signWithDomainSpecificKeyPair(keyPair: P256.Signing.PrivateKey,
+                                       payload: Data) throws -> P256.Signing
+        .ECDSASignature
+    {
         try keyPair.signature(for: payload)
     }
 
@@ -139,8 +176,9 @@ class DeterministicP256 {
 
      This method provides API parity with the Kotlin implementation.
 
-     In the current Swift implementation, the public key is simple to retrieve in raw representation as opposed to DER representation.
-     This method returns the exact same bytes as the equivalent `getPurePKBytes` method in the Kotlin implementation.
+     In the current Swift implementation, the public key is simple to retrieve in raw representation
+     as opposed to DER representation. This method returns the exact same bytes as the equivalent `getPurePKBytes`
+     method in the Kotlin implementation.
 
      - Parameters:
         - keyPair: A `P256.Signing.PrivateKey` object representing the private key from which to extract the public key bytes.
