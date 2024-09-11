@@ -115,13 +115,13 @@ class DeterministicP256 {
 
      This function concatenates the provided derived main key, origin, user ID, and counter to create a unique input.
      It then calculates the SHA-512 hash of this input and uses the first 32 bytes of the hash as the seed to
-     generate a P256 private key. The origin and userId are meant to correspond to their WebAuthn counterparts
+     generate a P256 private key. The origin and userHandle are meant to correspond to their WebAuthn counterparts
      but they can be any strings that help to uniquely identify the key pair.
 
      - Parameters:
         - derivedMainKey: A `Data` object representing the derived main key.
         - origin: A `String` representing the origin or domain for which the key pair is being generated.
-        - userId: A `String` representing the user ID.
+        - userHandle: A `String` representing the user ID.
         - counter: An optional `UInt32` counter to ensure uniqueness. Defaults to 0.
 
      - Returns: A `P256.Signing.PrivateKey` object representing the generated private key.
@@ -136,13 +136,13 @@ class DeterministicP256 {
     func genDomainSpecificKeyPair(
         derivedMainKey: Data,
         origin: String,
-        userId: String,
+        userHandle: String,
         counter: UInt32 = 0
     ) -> P256.Signing.PrivateKey {
         var concat = Data()
         concat.append(derivedMainKey)
         concat.append(contentsOf: Array(origin.utf8))
-        concat.append(contentsOf: Array(userId.utf8))
+        concat.append(contentsOf: Array(userHandle.utf8))
 
         let counterBytes = withUnsafeBytes(of: counter.bigEndian, Array.init)
         concat.append(contentsOf: counterBytes)

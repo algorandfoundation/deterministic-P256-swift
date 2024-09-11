@@ -256,23 +256,23 @@ class DeterministicP256Test: XCTestCase {
 
         // Example values taken from: https://webauthn.guide/#registration
         let origin = "https://webauthn.guide"
-        let userId = "a2bd8bf7-2145-4a5a-910f-8fdc9ef421d3"
+        let userHandle = "a2bd8bf7-2145-4a5a-910f-8fdc9ef421d3"
 
         let keyPair = D.genDomainSpecificKeyPair(
             derivedMainKey: derivedMainKey,
             origin: origin,
-            userId: userId
+            userHandle: userHandle
         )
         let keyPair0 = D.genDomainSpecificKeyPair(
             derivedMainKey: derivedMainKey,
             origin: origin,
-            userId: userId,
+            userHandle: userHandle,
             counter: 0
         )
         let keyPair1 = D.genDomainSpecificKeyPair(
             derivedMainKey: derivedMainKey,
             origin: origin,
-            userId: userId,
+            userHandle: userHandle,
             counter: 1
         )
 
@@ -494,7 +494,7 @@ class DeterministicP256Test: XCTestCase {
             D.genDomainSpecificKeyPair(
                 derivedMainKey: derivedMainKey,
                 origin: origin,
-                userId: userId,
+                userHandle: userHandle,
                 counter: 1
             ).publicKey.rawRepresentation.map { $0 },
             "Keys with the same counter value should be the same!"
