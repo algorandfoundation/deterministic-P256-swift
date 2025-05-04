@@ -18,7 +18,10 @@ import CryptoKit
 import Foundation
 import MnemonicSwift
 
-class DeterministicP256 {
+public class DeterministicP256 {
+    // Public initializer to allow external instantiation
+    public init() {}
+
     /**
      Generates a derived main key using a BIP39 mnemonic phrase.
 
@@ -37,7 +40,7 @@ class DeterministicP256 {
 
      - Note: The `keyLength` parameter is integer divided by 8 internally to convert the length from bits to full bytes.
      */
-    func genDerivedMainKeyWithBIP39(
+    public func genDerivedMainKeyWithBIP39(
         phrase: String,
         salt: [UInt8] = Array("liquid".utf8),
         iterationCount: Int = 210_000,
@@ -80,7 +83,7 @@ class DeterministicP256 {
 
      - Note: The `keyLength` parameter specifies the length of the derived key in bytes.
      */
-    func genDerivedMainKey(
+    public func genDerivedMainKey(
         entropy: [UInt8],
         salt: [UInt8],
         iterationCount: Int,
@@ -133,7 +136,7 @@ class DeterministicP256 {
      are used as the seed for the private key, similar to BC in the Kotlin implementation. Certain java.security providers
      accept 40 bytes of seed but we explictly ensure it is 32 bytes.
      */
-    func genDomainSpecificKeyPair(
+    public func genDomainSpecificKeyPair(
         derivedMainKey: Data,
         origin: String,
         userHandle: String,
@@ -179,8 +182,8 @@ class DeterministicP256 {
 
      - Note: The signature is generated using the ECDSA algorithm with the P256 curve.
      */
-    func signWithDomainSpecificKeyPair(keyPair: P256.Signing.PrivateKey,
-                                       payload: Data) throws -> P256.Signing
+    public func signWithDomainSpecificKeyPair(keyPair: P256.Signing.PrivateKey,
+                                              payload: Data) throws -> P256.Signing
         .ECDSASignature
     {
         try keyPair.signature(for: payload)
@@ -200,7 +203,7 @@ class DeterministicP256 {
 
      - Returns: An array of `UInt8` containing the raw public key bytes.
      */
-    func getPurePKBytes(keyPair: P256.Signing.PrivateKey) -> [UInt8] {
+    public func getPurePKBytes(keyPair: P256.Signing.PrivateKey) -> [UInt8] {
         [UInt8](keyPair.publicKey.rawRepresentation)
     }
 }
